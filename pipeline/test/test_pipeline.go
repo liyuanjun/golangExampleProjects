@@ -15,7 +15,8 @@ func closeOff() {
 }
 
 func main() {
-
+	testFile("small.in",64) // 64 * 8
+	testFile("large.in",64*1024*1024)
 
 }
 
