@@ -6,7 +6,16 @@ import (
 	"io"
 	"encoding/binary"
 	"math/rand"
+	"time"
+	"github.com/prometheus/common/log"
 )
+
+var startTime time.Time
+
+// 初始化函数
+func Init()  {
+   startTime = time.Now()
+}
 
 // 将Array中的数据导入到channel
 func ArraySource(data ... int) <-chan int {
@@ -31,8 +40,9 @@ func InMemorySort(in <-chan int) <-chan int {
 		for v := range in {
 			data = append(data, v)
 		}
-		// 排序
-		sort.Ints(data)
+		log.Infoln("Read data done in memory :",time.Now().Sub(startTime))
+		sort.Ints(data) // 排序
+		log.Infoln("Sort data done in memory :",time.Now().Sub(startTime))
 		// 输出
 		for _, v := range data {
 			out <- v
@@ -61,6 +71,7 @@ func Merge2(int1, int2 <-chan int) <-chan int {
 		}
 		// 关闭channel
 		close(out)
+		log.Infoln("Merge2 data done of channel ",time.Now().Sub(startTime))
 	}()
 	return out
 }

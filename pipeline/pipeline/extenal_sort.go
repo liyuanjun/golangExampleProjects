@@ -7,6 +7,7 @@ import (
 
 // 根据要排序的大文件进行构建pipeline
 func CreatePipeline(fileName string, fileSize, chunkCount int) <-chan int {
+	Init()
 	chunkSize := fileSize / chunkCount
 	var sortResults []<-chan int
 	for i := 0; i < chunkCount; i++ {

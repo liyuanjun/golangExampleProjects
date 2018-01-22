@@ -12,7 +12,7 @@ func main() {
 	readFIle := "file.out"
 
 	dataSize := 64 * 1024 * 1024 // 512 MB
-	fileSize := dataSize * 8 // bytes
+	fileSize := dataSize * 8     // bytes
 	chunkCount := 64
 	// 创建随机数字组成的文件
 	createRandomIntFIle(randomFile, dataSize)
@@ -27,8 +27,15 @@ func main() {
 	}
 	defer file.Close()
 	sourceData := pipeline.ReaderSource(file, -1)
+
+	printSize := 0
 	for data := range sourceData {
+		if printSize > 50 {
+			break
+		}
 		fmt.Println(data)
+		printSize += 1
+
 	}
 }
 
