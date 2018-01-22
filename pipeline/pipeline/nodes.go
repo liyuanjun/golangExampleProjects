@@ -66,14 +66,17 @@ func Merge2(int1, int2 <-chan int) <-chan int {
 }
 
 // 读取文件作为数据源
-func ReaderSource(reader io.Reader) <-chan int {
+func ReaderSource(reader io.Reader, chunkSize int) <-chan int {
 	out := make(chan int)
 	go func() {
 		// 声明一个8字节大小的buffer对象
 		buffer := make([]byte, 8)
+		readSize := 0
 		for {
 			n, err := reader.Read(buffer)
-			if err != nil { // EOF
+			readSize += n
+			// EOF结尾 或者 读取数量大于chunkSize即退出
+			if err != nil || (chunkSize != -1 && readSize > chunkSize) {
 				break
 			}
 			if n > 0 {
@@ -111,4 +114,14 @@ func RandomIntSource(count int) <-chan int {
 		close(out)
 	}()
 	return out
+}
+
+// 合并多个channel
+func MergeN(inputs ... <-chan int) <-chan int {
+	if len(inputs) == 1 {
+		return inputs[0]
+	}
+	middleIndex := len(inputs) / 2
+	// 递归 merge inputs[0:middleIndex] and merge inputs[middleIndex:len-1]
+	return Merge2(MergeN(inputs[:middleIndex]...), MergeN(inputs[middleIndex:]...))
 }

@@ -15,8 +15,8 @@ func closeOff() {
 }
 
 func main() {
-	testFile("small.in",64) // 64 * 8
-	testFile("large.in",64*1024*1024)
+	testFile("small.in", 64) // 64 * 8
+	//testFile("large.in",64*1024*1024)
 
 }
 
@@ -59,10 +59,10 @@ func testMerge() {
 	}
 }
 
-func testRand()  {
+func testRand() {
 	fmt.Println(rand.Int())
 	fmt.Println(rand.Uint64())
-	for i:=0;i<10;i++{
+	for i := 0; i < 10; i++ {
 		fmt.Println(rand.Intn(50))
 	}
 }
@@ -76,7 +76,7 @@ func testFile(fileName string, size int) {
 	}
 	defer smallFile.Close()
 	// 将file对象转为buff io,使其变为缓冲流，写入速度更快
-	writer  := bufio.NewWriter(smallFile)
+	writer := bufio.NewWriter(smallFile)
 	// 生成随机数
 	data := pipeline.RandomIntSource(size)
 	// 写入文件
@@ -84,15 +84,14 @@ func testFile(fileName string, size int) {
 	// 清空缓存，避免数据不完整
 	writer.Flush()
 
-
 	// 读取文件数据
 	smallFile, err = os.Open(fileName)
 	if err != nil {
 		panic(err)
 	}
 	// 将file对象转为buff io,使其变为缓冲流，读取速度更快
-	reader  := bufio.NewReader(smallFile)
-	chData := pipeline.ReaderSource(reader)
+	reader := bufio.NewReader(smallFile)
+	chData := pipeline.ReaderSource(reader, -1)
 	// 排序
 	chData = pipeline.InMemorySort(chData)
 	for i := range chData {
