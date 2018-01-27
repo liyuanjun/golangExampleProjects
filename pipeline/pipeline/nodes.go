@@ -101,7 +101,9 @@ func ReaderSource(reader io.Reader, chunkSize int) <-chan int {
 	return out
 }
 
-// 将channel数据写入文件
+// 将channel数据写入文件或网络流中
+// 当writer为file则写入file
+// 当writer为其他 io.Writer 对象，则写入对应对象
 func WriterSink(writer io.Writer, in <-chan int) {
 	for {
 		buffer := make([]byte, 8)
